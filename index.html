@@ -2566,7 +2566,7 @@
                 </h3>
                 <button class="close-modal" id="closeHelpModal">&times;</button>
             </div>
-            
+
             <div style="max-height: 500px; overflow-y: auto;">
                 <div style="margin-bottom: 30px;">
                     <h4 style="color: var(--primary-blue); margin-bottom: 15px;">Quick Start Guide</h4>
@@ -2578,7 +2578,7 @@
                         <li>Configure settings for exchange rates and Google Sheets sync</li>
                     </ol>
                 </div>
-                
+
                 <div style="margin-bottom: 30px;">
                     <h4 style="color: var(--primary-blue); margin-bottom: 15px;">Features</h4>
                     <ul style="margin-left: 20px; color: var(--text-secondary); line-height: 1.8;">
@@ -2590,7 +2590,7 @@
                         <li><strong>Data Export</strong>: Export to CSV for external analysis</li>
                     </ul>
                 </div>
-                
+
                 <div style="margin-bottom: 30px;">
                     <h4 style="color: var(--primary-blue); margin-bottom: 15px;">Keyboard Shortcuts</h4>
                     <div style="background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
@@ -2608,7 +2608,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div style="margin-bottom: 30px;">
                     <h4 style="color: var(--primary-blue); margin-bottom: 15px;">Support</h4>
                     <p style="color: var(--text-secondary);">
@@ -2621,6 +2621,556 @@
                         <li>You're using a modern browser (Chrome, Firefox, Safari, Edge)</li>
                     </ul>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Budget Configuration Modal -->
+    <div class="modal" id="budgetModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-chart-pie"></i> Budget Configuration
+                </h3>
+                <button class="close-modal" id="closeBudgetModal">&times;</button>
+            </div>
+
+            <div style="max-height: 500px; overflow-y: auto;">
+                <div class="form-group">
+                    <label class="form-label" for="budgetAnnualIncome">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Annual Income (THB)
+                    </label>
+                    <div class="input-with-icon">
+                        <input type="number" class="form-control" id="budgetAnnualIncome" step="0.01" placeholder="600000">
+                        <span class="input-icon">฿</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">
+                        Monthly: ฿<span id="budgetMonthlyIncomePreview">0</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="budgetMonthlyLimit">
+                        <i class="fas fa-wallet"></i>
+                        Monthly Budget Limit (THB)
+                    </label>
+                    <div class="input-with-icon">
+                        <input type="number" class="form-control" id="budgetMonthlyLimit" step="0.01" placeholder="50000">
+                        <span class="input-icon">฿</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">
+                        IDR Equivalent: Rp <span id="budgetMonthlyLimitIDR">0</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="budgetSavingsGoal">
+                        <i class="fas fa-piggy-bank"></i>
+                        Monthly Savings Goal (THB)
+                    </label>
+                    <div class="input-with-icon">
+                        <input type="number" class="form-control" id="budgetSavingsGoal" step="0.01" placeholder="10000">
+                        <span class="input-icon">฿</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; margin-bottom: 15px;">
+                    <h4 style="color: var(--primary-blue); display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-tags"></i> Category Budgets
+                    </h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 8px;">
+                        Set spending limits for each category (optional)
+                    </p>
+                </div>
+
+                <div id="categoryBudgetsContainer" style="max-height: 250px; overflow-y: auto; background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
+                    <!-- Category budgets will be loaded here -->
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: var(--off-white); border-radius: var(--radius-md); border: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="color: var(--text-secondary);">Total Category Budgets</span>
+                        <span style="font-weight: 600;" id="totalCategoryBudgets">฿ 0.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">Unallocated Budget</span>
+                        <span style="font-weight: 600; color: var(--success);" id="unallocatedBudget">฿ 0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="btn btn-outline" id="cancelBudgetBtn" style="flex: 1;">
+                    Cancel
+                </button>
+                <button class="btn btn-primary" id="saveBudgetBtn" style="flex: 1;">
+                    <i class="fas fa-save"></i> Save Budget
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investment Configuration Modal -->
+    <div class="modal" id="investmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-chart-line"></i> Investment Configuration
+                </h3>
+                <button class="close-modal" id="closeInvestmentModal">&times;</button>
+            </div>
+
+            <div style="max-height: 500px; overflow-y: auto;">
+                <div class="form-group">
+                    <label class="form-label" for="investmentAllocation">
+                        <i class="fas fa-percentage"></i>
+                        Investment Allocation (% of Annual Income)
+                    </label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="range" id="investmentAllocationSlider" min="0" max="100" value="20" style="flex: 1;">
+                        <input type="number" class="form-control" id="investmentAllocation" style="width: 80px;" min="0" max="100" value="20">
+                        <span>%</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">
+                        Annual Investment: ฿<span id="annualInvestmentPreview">0</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; margin-bottom: 15px;">
+                    <h4 style="color: var(--primary-blue); display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-chart-pie"></i> Portfolio Allocation
+                    </h4>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="stockAllocation">
+                        <i class="fas fa-chart-bar"></i>
+                        Stock Market Allocation (%)
+                    </label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="range" id="stockAllocationSlider" min="0" max="100" value="70" style="flex: 1;">
+                        <input type="number" class="form-control" id="stockAllocation" style="width: 80px;" min="0" max="100" value="70">
+                        <span>%</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">
+                        Amount: ฿<span id="stockAmountPreview">0</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="cryptoAllocation">
+                        <i class="fab fa-bitcoin"></i>
+                        Cryptocurrency Allocation (%)
+                    </label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="range" id="cryptoAllocationSlider" min="0" max="100" value="30" style="flex: 1;">
+                        <input type="number" class="form-control" id="cryptoAllocation" style="width: 80px;" min="0" max="100" value="30">
+                        <span>%</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">
+                        Amount: ฿<span id="cryptoAmountPreview">0</span>
+                    </div>
+                </div>
+
+                <div id="allocationWarning" class="warning-alert" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <div style="font-weight: 600;">Allocation Warning</div>
+                        <div style="font-size: 0.9rem; margin-top: 4px;">Stock + Crypto allocation must equal 100%</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; margin-bottom: 15px;">
+                    <h4 style="color: var(--primary-blue); display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-chart-line"></i> Expected Returns
+                    </h4>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="stockReturn">
+                        <i class="fas fa-percentage"></i>
+                        Stock Expected Monthly Return (%)
+                    </label>
+                    <input type="number" class="form-control" id="stockReturn" step="0.1" value="1.5" min="0" max="50">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="cryptoReturn">
+                        <i class="fas fa-percentage"></i>
+                        Crypto Expected Monthly Return (%)
+                    </label>
+                    <input type="number" class="form-control" id="cryptoReturn" step="0.1" value="3.0" min="0" max="100">
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: var(--off-white); border-radius: var(--radius-md); border: 1px solid var(--border);">
+                    <div style="font-weight: 600; margin-bottom: 15px; color: var(--primary-blue);">Projected Returns</div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="color: var(--text-secondary);">Monthly Return</span>
+                        <span style="font-weight: 600; color: var(--success);" id="projectedMonthlyReturn">฿ 0.00</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">Annual Return</span>
+                        <span style="font-weight: 600;" id="projectedAnnualReturn">฿ 0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="btn btn-outline" id="cancelInvestmentBtn" style="flex: 1;">
+                    Cancel
+                </button>
+                <button class="btn btn-primary" id="saveInvestmentBtn" style="flex: 1;">
+                    <i class="fas fa-save"></i> Save Investment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recurring Transactions Modal -->
+    <div class="modal" id="recurringModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-redo"></i> Recurring Transactions
+                </h3>
+                <button class="close-modal" id="closeRecurringModal">&times;</button>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <h4 style="color: var(--primary-blue); margin-bottom: 15px;">Add New Recurring Transaction</h4>
+
+                <div class="form-group">
+                    <label class="form-label" for="recurringDescription">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        Description
+                    </label>
+                    <input type="text" class="form-control" id="recurringDescription" placeholder="Monthly Rent, Salary, etc.">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="recurringAmount">
+                        <i class="fas fa-money-bill"></i>
+                        Amount (THB)
+                    </label>
+                    <div class="input-with-icon">
+                        <input type="number" class="form-control" id="recurringAmount" step="0.01">
+                        <span class="input-icon">฿</span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label" for="recurringType">
+                            <i class="fas fa-exchange-alt"></i>
+                            Type
+                        </label>
+                        <select class="form-control" id="recurringType">
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="recurringCategory">
+                            <i class="fas fa-tag"></i>
+                            Category
+                        </label>
+                        <select class="form-control" id="recurringCategory">
+                            <!-- Categories will be loaded -->
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label" for="recurringFrequency">
+                            <i class="fas fa-calendar-alt"></i>
+                            Frequency
+                        </label>
+                        <select class="form-control" id="recurringFrequency">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-weekly</option>
+                            <option value="monthly" selected>Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="recurringDay">
+                            <i class="fas fa-calendar-day"></i>
+                            Day of Month
+                        </label>
+                        <input type="number" class="form-control" id="recurringDay" min="1" max="31" value="1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="recurringPaymentMethod">
+                        <i class="fas fa-credit-card"></i>
+                        Payment Method
+                    </label>
+                    <select class="form-control" id="recurringPaymentMethod">
+                        <option value="bank">Bank Transfer</option>
+                        <option value="cash">Cash</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-toggle-on"></i>
+                        Status
+                    </label>
+                    <label class="toggle">
+                        <input type="checkbox" id="recurringActive" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span style="margin-left: 10px; color: var(--text-secondary);">Active</span>
+                </div>
+
+                <button class="btn btn-success btn-block" id="addRecurringBtn">
+                    <i class="fas fa-plus"></i> Add Recurring Transaction
+                </button>
+            </div>
+
+            <div style="border-top: 2px solid var(--border); padding-top: 25px;">
+                <h4 style="color: var(--primary-blue); margin-bottom: 15px;">Existing Recurring Transactions</h4>
+
+                <div id="recurringListContainer" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Recurring transactions will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Utility History Modal -->
+    <div class="modal" id="utilityHistoryModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-history"></i> Utility Consumption History
+                </h3>
+                <button class="close-modal" id="closeUtilityHistoryModal">&times;</button>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+                <button class="btn btn-sm active" id="electricityHistoryTab" data-tab="electricity">
+                    <i class="fas fa-lightbulb"></i> Electricity
+                </button>
+                <button class="btn btn-sm" id="waterHistoryTab" data-tab="water">
+                    <i class="fas fa-tint"></i> Water
+                </button>
+            </div>
+
+            <div id="electricityHistoryContent">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                    <div style="background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 5px;">Total Consumption</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="electricityTotalConsumption">0 kWh</div>
+                    </div>
+                    <div style="background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 5px;">Total Cost</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="electricityTotalCost">฿ 0.00</div>
+                    </div>
+                    <div style="background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 5px;">Average Daily</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="electricityAvgDaily">0 kWh</div>
+                    </div>
+                </div>
+
+                <div class="table-container" style="max-height: 350px; overflow-y: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Reading</th>
+                                <th>Consumption</th>
+                                <th>Days</th>
+                                <th>Daily Avg</th>
+                                <th>Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody id="electricityHistoryBody">
+                            <!-- History will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="waterHistoryContent" style="display: none;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                    <div style="background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 5px;">Total Consumption</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="waterTotalConsumption">0 units</div>
+                    </div>
+                    <div style="background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 5px;">Total Cost</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="waterTotalCost">฿ 0.00</div>
+                    </div>
+                    <div style="background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 5px;">Average Daily</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="waterAvgDaily">0 units</div>
+                    </div>
+                </div>
+
+                <div class="table-container" style="max-height: 350px; overflow-y: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Reading</th>
+                                <th>Consumption</th>
+                                <th>Days</th>
+                                <th>Daily Avg</th>
+                                <th>Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody id="waterHistoryBody">
+                            <!-- History will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Transaction Modal -->
+    <div class="modal" id="editTransactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-edit"></i> Edit Transaction
+                </h3>
+                <button class="close-modal" id="closeEditTransactionModal">&times;</button>
+            </div>
+
+            <form id="editTransactionForm">
+                <input type="hidden" id="editTxId">
+
+                <div class="form-group">
+                    <label class="form-label" for="editTxDate">
+                        <i class="far fa-calendar"></i>
+                        Date
+                    </label>
+                    <input type="date" class="form-control" id="editTxDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editTxDescription">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        Description
+                    </label>
+                    <input type="text" class="form-control" id="editTxDescription" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editTxAmount">
+                        <i class="fas fa-money-bill"></i>
+                        Amount (THB)
+                    </label>
+                    <div class="input-with-icon">
+                        <input type="number" class="form-control" id="editTxAmount" required step="0.01">
+                        <span class="input-icon">฿</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editTxType">
+                        <i class="fas fa-exchange-alt"></i>
+                        Transaction Type
+                    </label>
+                    <select class="form-control" id="editTxType" required>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                        <option value="transfer">Transfer</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editTxCategory">
+                        <i class="fas fa-tag"></i>
+                        Category
+                    </label>
+                    <select class="form-control" id="editTxCategory" required>
+                        <!-- Categories will be loaded -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editTxPaymentMethod">
+                        <i class="fas fa-credit-card"></i>
+                        Payment Method
+                    </label>
+                    <select class="form-control" id="editTxPaymentMethod" required>
+                        <option value="bank">Bank Transfer</option>
+                        <option value="cash">Cash</option>
+                        <option value="bank_to_cash">Bank → Cash (Withdrawal)</option>
+                        <option value="cash_to_bank">Cash → Bank (Deposit)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editTxNotes">
+                        <i class="far fa-sticky-note"></i>
+                        Additional Notes
+                    </label>
+                    <textarea class="form-control" id="editTxNotes" rows="2"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button type="button" class="btn btn-outline" id="cancelEditTransactionBtn" style="flex: 1;">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Account History Modal -->
+    <div class="modal" id="accountHistoryModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="accountHistoryTitle">
+                    <i class="fas fa-history"></i> Account History
+                </h3>
+                <button class="close-modal" id="closeAccountHistoryModal">&times;</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                <div style="background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
+                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 5px;">Current Balance</div>
+                    <div style="font-size: 1.5rem; font-weight: 700;" id="historyCurrentBalance">฿ 0.00</div>
+                </div>
+                <div style="background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
+                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 5px;">Total Income</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);" id="historyTotalIncome">฿ 0.00</div>
+                </div>
+                <div style="background: var(--light-gray); padding: 15px; border-radius: var(--radius-md);">
+                    <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 5px;">Total Expenses</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--danger);" id="historyTotalExpenses">฿ 0.00</div>
+                </div>
+            </div>
+
+            <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Balance After</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accountHistoryBody">
+                        <!-- History will be loaded here -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -3130,7 +3680,9 @@
                 document.getElementById('editCashBalanceBtn').onclick = () => this.showEditBalanceModal('cash');
                 document.getElementById('bankAdjustBtn').onclick = () => this.showAdjustmentModal('bank');
                 document.getElementById('cashAdjustBtn').onclick = () => this.showAdjustmentModal('cash');
-                
+                document.getElementById('bankHistoryBtn').onclick = () => this.showAccountHistoryModal('bank');
+                document.getElementById('cashHistoryBtn').onclick = () => this.showAccountHistoryModal('cash');
+
                 // Transaction form
                 document.getElementById('transactionForm').onsubmit = (e) => {
                     e.preventDefault();
@@ -3141,7 +3693,8 @@
                 document.getElementById('txType').onchange = (e) => this.handleTransactionTypeChange(e.target.value);
                 document.getElementById('addCategoryBtn').onclick = () => this.showCategoryModal();
                 document.getElementById('quickAddBtn').onclick = () => this.quickAddTransaction();
-                
+                document.getElementById('recurringBtn').onclick = () => this.showRecurringModal();
+
                 // Budget and investments
                 document.getElementById('editBudgetBtn').onclick = () => this.showBudgetModal();
                 document.getElementById('editInvestmentsBtn').onclick = () => this.showInvestmentModal();
@@ -3213,7 +3766,47 @@
                 
                 // Help modal
                 document.getElementById('closeHelpModal').onclick = () => this.hideModal('helpModal');
-                
+
+                // Budget modal
+                document.getElementById('closeBudgetModal').onclick = () => this.hideModal('budgetModal');
+                document.getElementById('cancelBudgetBtn').onclick = () => this.hideModal('budgetModal');
+                document.getElementById('saveBudgetBtn').onclick = () => this.saveBudgetConfig();
+                document.getElementById('budgetAnnualIncome').oninput = () => this.updateBudgetPreview();
+                document.getElementById('budgetMonthlyLimit').oninput = () => this.updateBudgetPreview();
+
+                // Investment modal
+                document.getElementById('closeInvestmentModal').onclick = () => this.hideModal('investmentModal');
+                document.getElementById('cancelInvestmentBtn').onclick = () => this.hideModal('investmentModal');
+                document.getElementById('saveInvestmentBtn').onclick = () => this.saveInvestmentConfig();
+                document.getElementById('investmentAllocationSlider').oninput = (e) => this.syncInvestmentSlider('allocation', e.target.value);
+                document.getElementById('investmentAllocation').oninput = (e) => this.syncInvestmentInput('allocation', e.target.value);
+                document.getElementById('stockAllocationSlider').oninput = (e) => this.syncInvestmentSlider('stock', e.target.value);
+                document.getElementById('stockAllocation').oninput = (e) => this.syncInvestmentInput('stock', e.target.value);
+                document.getElementById('cryptoAllocationSlider').oninput = (e) => this.syncInvestmentSlider('crypto', e.target.value);
+                document.getElementById('cryptoAllocation').oninput = (e) => this.syncInvestmentInput('crypto', e.target.value);
+                document.getElementById('stockReturn').oninput = () => this.updateInvestmentPreview();
+                document.getElementById('cryptoReturn').oninput = () => this.updateInvestmentPreview();
+
+                // Recurring modal
+                document.getElementById('closeRecurringModal').onclick = () => this.hideModal('recurringModal');
+                document.getElementById('addRecurringBtn').onclick = () => this.addRecurringTransaction();
+
+                // Utility history modal
+                document.getElementById('closeUtilityHistoryModal').onclick = () => this.hideModal('utilityHistoryModal');
+                document.getElementById('electricityHistoryTab').onclick = () => this.switchUtilityHistoryTab('electricity');
+                document.getElementById('waterHistoryTab').onclick = () => this.switchUtilityHistoryTab('water');
+
+                // Edit transaction modal
+                document.getElementById('closeEditTransactionModal').onclick = () => this.hideModal('editTransactionModal');
+                document.getElementById('cancelEditTransactionBtn').onclick = () => this.hideModal('editTransactionModal');
+                document.getElementById('editTransactionForm').onsubmit = (e) => {
+                    e.preventDefault();
+                    this.saveEditedTransaction();
+                };
+
+                // Account history modal
+                document.getElementById('closeAccountHistoryModal').onclick = () => this.hideModal('accountHistoryModal');
+
                 // Close modals on outside click
                 window.onclick = (e) => {
                     if (e.target.classList.contains('modal')) {
@@ -4089,8 +4682,104 @@
 
             // Show budget modal
             async showBudgetModal() {
-                // Implementation for budget configuration modal
-                this.showToast('Budget configuration coming soon', 'info');
+                const budget = await this.loadBudget();
+                const categories = await this.loadCategories();
+
+                // Populate form fields
+                document.getElementById('budgetAnnualIncome').value = budget.annualIncome || 600000;
+                document.getElementById('budgetMonthlyLimit').value = budget.monthlyBudget || 50000;
+                document.getElementById('budgetSavingsGoal').value = budget.savingsGoal || 10000;
+
+                // Populate category budgets
+                const container = document.getElementById('categoryBudgetsContainer');
+                container.innerHTML = '';
+
+                categories.forEach(category => {
+                    const existingBudget = budget.categoryBudgets?.find(cb => cb.category === category);
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.style.cssText = 'display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: var(--white); border-radius: var(--radius-sm);';
+                    categoryDiv.innerHTML = `
+                        <span style="flex: 1; font-weight: 500;">${category}</span>
+                        <div class="input-with-icon" style="width: 150px;">
+                            <input type="number" class="form-control category-budget-input" data-category="${category}"
+                                   value="${existingBudget?.amount || ''}" placeholder="0" step="0.01" style="padding: 8px 12px;">
+                            <span class="input-icon">฿</span>
+                        </div>
+                    `;
+                    container.appendChild(categoryDiv);
+                });
+
+                // Add event listeners for category budget inputs
+                container.querySelectorAll('.category-budget-input').forEach(input => {
+                    input.oninput = () => this.updateCategoryBudgetTotals();
+                });
+
+                this.updateBudgetPreview();
+                this.updateCategoryBudgetTotals();
+                this.showModal('budgetModal');
+            },
+
+            // Update budget preview
+            updateBudgetPreview() {
+                const annualIncome = parseFloat(document.getElementById('budgetAnnualIncome').value) || 0;
+                const monthlyLimit = parseFloat(document.getElementById('budgetMonthlyLimit').value) || 0;
+                const rate = this.config.exchangeRate.current;
+
+                document.getElementById('budgetMonthlyIncomePreview').textContent = this.formatCurrency(annualIncome / 12);
+                document.getElementById('budgetMonthlyLimitIDR').textContent = this.formatCurrency(monthlyLimit * rate);
+            },
+
+            // Update category budget totals
+            updateCategoryBudgetTotals() {
+                const monthlyLimit = parseFloat(document.getElementById('budgetMonthlyLimit').value) || 0;
+                let totalCategoryBudgets = 0;
+
+                document.querySelectorAll('.category-budget-input').forEach(input => {
+                    totalCategoryBudgets += parseFloat(input.value) || 0;
+                });
+
+                const unallocated = monthlyLimit - totalCategoryBudgets;
+                document.getElementById('totalCategoryBudgets').textContent = `฿ ${this.formatCurrency(totalCategoryBudgets)}`;
+                document.getElementById('unallocatedBudget').textContent = `฿ ${this.formatCurrency(unallocated)}`;
+                document.getElementById('unallocatedBudget').style.color = unallocated < 0 ? 'var(--danger)' : 'var(--success)';
+            },
+
+            // Save budget configuration
+            async saveBudgetConfig() {
+                try {
+                    const annualIncome = parseFloat(document.getElementById('budgetAnnualIncome').value) || 0;
+                    const monthlyBudget = parseFloat(document.getElementById('budgetMonthlyLimit').value) || 0;
+                    const savingsGoal = parseFloat(document.getElementById('budgetSavingsGoal').value) || 0;
+
+                    // Collect category budgets
+                    const categoryBudgets = [];
+                    document.querySelectorAll('.category-budget-input').forEach(input => {
+                        const amount = parseFloat(input.value);
+                        if (amount > 0) {
+                            categoryBudgets.push({
+                                category: input.dataset.category,
+                                amount: amount
+                            });
+                        }
+                    });
+
+                    const budgetConfig = {
+                        annualIncome,
+                        monthlyBudget,
+                        savingsGoal,
+                        categoryBudgets,
+                        lastUpdated: DateTime.now().toISO()
+                    };
+
+                    await this.saveData(this.storageKeys.budget, budgetConfig);
+                    this.updateBudgetDisplay();
+                    this.updateInvestmentDisplay();
+                    this.hideModal('budgetModal');
+                    this.showToast('Budget configuration saved', 'success');
+                } catch (error) {
+                    console.error('Error saving budget:', error);
+                    this.showToast('Error saving budget', 'error');
+                }
             },
 
             // Load investments
@@ -4156,8 +4845,132 @@
 
             // Show investment modal
             async showInvestmentModal() {
-                // Implementation for investment configuration modal
-                this.showToast('Investment configuration coming soon', 'info');
+                const investments = await this.loadInvestments();
+                const budget = await this.loadBudget();
+
+                // Populate form fields
+                document.getElementById('investmentAllocation').value = investments.allocationPercentage || 20;
+                document.getElementById('investmentAllocationSlider').value = investments.allocationPercentage || 20;
+                document.getElementById('stockAllocation').value = investments.stockPercentage || 70;
+                document.getElementById('stockAllocationSlider').value = investments.stockPercentage || 70;
+                document.getElementById('cryptoAllocation').value = investments.cryptoPercentage || 30;
+                document.getElementById('cryptoAllocationSlider').value = investments.cryptoPercentage || 30;
+                document.getElementById('stockReturn').value = investments.stockReturn || 1.5;
+                document.getElementById('cryptoReturn').value = investments.cryptoReturn || 3.0;
+
+                this.updateInvestmentPreview();
+                this.showModal('investmentModal');
+            },
+
+            // Sync investment slider with input
+            syncInvestmentSlider(type, value) {
+                const numValue = parseInt(value) || 0;
+                if (type === 'allocation') {
+                    document.getElementById('investmentAllocation').value = numValue;
+                } else if (type === 'stock') {
+                    document.getElementById('stockAllocation').value = numValue;
+                    // Auto-adjust crypto
+                    const cryptoValue = Math.max(0, 100 - numValue);
+                    document.getElementById('cryptoAllocation').value = cryptoValue;
+                    document.getElementById('cryptoAllocationSlider').value = cryptoValue;
+                } else if (type === 'crypto') {
+                    document.getElementById('cryptoAllocation').value = numValue;
+                    // Auto-adjust stock
+                    const stockValue = Math.max(0, 100 - numValue);
+                    document.getElementById('stockAllocation').value = stockValue;
+                    document.getElementById('stockAllocationSlider').value = stockValue;
+                }
+                this.updateInvestmentPreview();
+            },
+
+            // Sync investment input with slider
+            syncInvestmentInput(type, value) {
+                const numValue = Math.min(100, Math.max(0, parseInt(value) || 0));
+                if (type === 'allocation') {
+                    document.getElementById('investmentAllocationSlider').value = numValue;
+                } else if (type === 'stock') {
+                    document.getElementById('stockAllocationSlider').value = numValue;
+                    // Auto-adjust crypto
+                    const cryptoValue = Math.max(0, 100 - numValue);
+                    document.getElementById('cryptoAllocation').value = cryptoValue;
+                    document.getElementById('cryptoAllocationSlider').value = cryptoValue;
+                } else if (type === 'crypto') {
+                    document.getElementById('cryptoAllocationSlider').value = numValue;
+                    // Auto-adjust stock
+                    const stockValue = Math.max(0, 100 - numValue);
+                    document.getElementById('stockAllocation').value = stockValue;
+                    document.getElementById('stockAllocationSlider').value = stockValue;
+                }
+                this.updateInvestmentPreview();
+            },
+
+            // Update investment preview
+            async updateInvestmentPreview() {
+                const budget = await this.loadBudget();
+                const annualIncome = budget.annualIncome || 600000;
+
+                const allocationPercent = parseFloat(document.getElementById('investmentAllocation').value) || 0;
+                const stockPercent = parseFloat(document.getElementById('stockAllocation').value) || 0;
+                const cryptoPercent = parseFloat(document.getElementById('cryptoAllocation').value) || 0;
+                const stockReturnRate = parseFloat(document.getElementById('stockReturn').value) || 0;
+                const cryptoReturnRate = parseFloat(document.getElementById('cryptoReturn').value) || 0;
+
+                const annualInvestment = (annualIncome * allocationPercent) / 100;
+                const stockAmount = (annualInvestment * stockPercent) / 100;
+                const cryptoAmount = (annualInvestment * cryptoPercent) / 100;
+
+                document.getElementById('annualInvestmentPreview').textContent = this.formatCurrency(annualInvestment);
+                document.getElementById('stockAmountPreview').textContent = this.formatCurrency(stockAmount);
+                document.getElementById('cryptoAmountPreview').textContent = this.formatCurrency(cryptoAmount);
+
+                // Calculate projected returns
+                const stockMonthlyReturn = (stockAmount * stockReturnRate) / 100;
+                const cryptoMonthlyReturn = (cryptoAmount * cryptoReturnRate) / 100;
+                const totalMonthlyReturn = stockMonthlyReturn + cryptoMonthlyReturn;
+                const totalAnnualReturn = totalMonthlyReturn * 12;
+
+                document.getElementById('projectedMonthlyReturn').textContent = `฿ ${this.formatCurrency(totalMonthlyReturn)}`;
+                document.getElementById('projectedAnnualReturn').textContent = `฿ ${this.formatCurrency(totalAnnualReturn)}`;
+
+                // Check allocation warning
+                const totalAllocation = stockPercent + cryptoPercent;
+                const warning = document.getElementById('allocationWarning');
+                if (totalAllocation !== 100) {
+                    warning.style.display = 'flex';
+                } else {
+                    warning.style.display = 'none';
+                }
+            },
+
+            // Save investment configuration
+            async saveInvestmentConfig() {
+                const stockPercent = parseFloat(document.getElementById('stockAllocation').value) || 0;
+                const cryptoPercent = parseFloat(document.getElementById('cryptoAllocation').value) || 0;
+
+                if (stockPercent + cryptoPercent !== 100) {
+                    this.showToast('Stock and Crypto allocation must equal 100%', 'error');
+                    return;
+                }
+
+                try {
+                    const investmentConfig = {
+                        allocationPercentage: parseFloat(document.getElementById('investmentAllocation').value) || 20,
+                        stockPercentage: stockPercent,
+                        cryptoPercentage: cryptoPercent,
+                        stockReturn: parseFloat(document.getElementById('stockReturn').value) || 1.5,
+                        cryptoReturn: parseFloat(document.getElementById('cryptoReturn').value) || 3.0,
+                        actualReturns: this.state.investments?.actualReturns || [],
+                        lastUpdated: DateTime.now().toISO()
+                    };
+
+                    await this.saveData(this.storageKeys.investments, investmentConfig);
+                    this.updateInvestmentDisplay();
+                    this.hideModal('investmentModal');
+                    this.showToast('Investment configuration saved', 'success');
+                } catch (error) {
+                    console.error('Error saving investment:', error);
+                    this.showToast('Error saving investment', 'error');
+                }
             },
 
             // Load utilities
@@ -4465,54 +5278,101 @@
             // Show utility history
             async showUtilityHistory() {
                 const utilities = await this.loadUtilities();
-                let historyHTML = '';
-                
-                // Electricity history
-                historyHTML += '<h3 style="margin-bottom: 15px;">Electricity History</h3>';
+
+                // Calculate electricity totals
+                let electricityTotalConsumption = 0;
+                let electricityTotalCost = 0;
+                let electricityTotalDays = 0;
+                utilities.electricity.history.forEach(reading => {
+                    electricityTotalConsumption += reading.consumption || 0;
+                    electricityTotalCost += reading.cost || 0;
+                    electricityTotalDays += reading.days || 0;
+                });
+                const electricityAvgDaily = electricityTotalDays > 0 ? electricityTotalConsumption / electricityTotalDays : 0;
+
+                // Calculate water totals
+                let waterTotalConsumption = 0;
+                let waterTotalCost = 0;
+                let waterTotalDays = 0;
+                utilities.water.history.forEach(reading => {
+                    waterTotalConsumption += reading.consumption || 0;
+                    waterTotalCost += reading.cost || 0;
+                    waterTotalDays += reading.days || 0;
+                });
+                const waterAvgDaily = waterTotalDays > 0 ? waterTotalConsumption / waterTotalDays : 0;
+
+                // Update summary displays
+                document.getElementById('electricityTotalConsumption').textContent = `${electricityTotalConsumption.toFixed(2)} kWh`;
+                document.getElementById('electricityTotalCost').textContent = `฿ ${this.formatCurrency(electricityTotalCost)}`;
+                document.getElementById('electricityAvgDaily').textContent = `${electricityAvgDaily.toFixed(2)} kWh`;
+
+                document.getElementById('waterTotalConsumption').textContent = `${waterTotalConsumption.toFixed(2)} units`;
+                document.getElementById('waterTotalCost').textContent = `฿ ${this.formatCurrency(waterTotalCost)}`;
+                document.getElementById('waterAvgDaily').textContent = `${waterAvgDaily.toFixed(2)} units`;
+
+                // Populate electricity history table
+                const electricityBody = document.getElementById('electricityHistoryBody');
+                electricityBody.innerHTML = '';
                 if (utilities.electricity.history.length === 0) {
-                    historyHTML += '<p>No electricity readings recorded.</p>';
+                    electricityBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--text-secondary);">No electricity readings recorded</td></tr>';
                 } else {
-                    historyHTML += '<div style="max-height: 300px; overflow-y: auto;">';
-                    utilities.electricity.history.forEach((reading, index) => {
-                        historyHTML += `
-                            <div style="padding: 10px; border-bottom: 1px solid var(--border);">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>${DateTime.fromISO(reading.timestamp).toFormat('dd/MM/yyyy')}</span>
-                                    <span style="font-weight: 600;">${reading.consumption.toFixed(2)} kWh</span>
-                                </div>
-                                <div style="font-size: 0.9rem; color: var(--text-secondary);">
-                                    Daily average: ${reading.dailyAverage.toFixed(2)} kWh/day • Cost: ฿${reading.cost.toFixed(2)}
-                                </div>
-                            </div>
+                    utilities.electricity.history.forEach(reading => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${DateTime.fromISO(reading.timestamp).toFormat('dd/MM/yyyy')}</td>
+                            <td>${reading.reading?.toFixed(2) || '-'} kWh</td>
+                            <td>${reading.consumption?.toFixed(2) || '0'} kWh</td>
+                            <td>${reading.days || '0'} days</td>
+                            <td>${reading.dailyAverage?.toFixed(2) || '0'} kWh/day</td>
+                            <td>฿ ${this.formatCurrency(reading.cost || 0)}</td>
                         `;
+                        electricityBody.appendChild(row);
                     });
-                    historyHTML += '</div>';
                 }
-                
-                // Water history
-                historyHTML += '<h3 style="margin-top: 30px; margin-bottom: 15px;">Water History</h3>';
+
+                // Populate water history table
+                const waterBody = document.getElementById('waterHistoryBody');
+                waterBody.innerHTML = '';
                 if (utilities.water.history.length === 0) {
-                    historyHTML += '<p>No water readings recorded.</p>';
+                    waterBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--text-secondary);">No water readings recorded</td></tr>';
                 } else {
-                    historyHTML += '<div style="max-height: 300px; overflow-y: auto;">';
-                    utilities.water.history.forEach((reading, index) => {
-                        historyHTML += `
-                            <div style="padding: 10px; border-bottom: 1px solid var(--border);">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>${DateTime.fromISO(reading.timestamp).toFormat('dd/MM/yyyy')}</span>
-                                    <span style="font-weight: 600;">${reading.consumption.toFixed(2)} units</span>
-                                </div>
-                                <div style="font-size: 0.9rem; color: var(--text-secondary);">
-                                    Daily average: ${reading.dailyAverage.toFixed(2)} units/day • Cost: ฿${reading.cost.toFixed(2)}
-                                </div>
-                            </div>
+                    utilities.water.history.forEach(reading => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${DateTime.fromISO(reading.timestamp).toFormat('dd/MM/yyyy')}</td>
+                            <td>${reading.reading?.toFixed(2) || '-'} units</td>
+                            <td>${reading.consumption?.toFixed(2) || '0'} units</td>
+                            <td>${reading.days || '0'} days</td>
+                            <td>${reading.dailyAverage?.toFixed(2) || '0'} units/day</td>
+                            <td>฿ ${this.formatCurrency(reading.cost || 0)}</td>
                         `;
+                        waterBody.appendChild(row);
                     });
-                    historyHTML += '</div>';
                 }
-                
-                // Show in modal or alert
-                alert(historyHTML);
+
+                // Show electricity tab by default
+                this.switchUtilityHistoryTab('electricity');
+                this.showModal('utilityHistoryModal');
+            },
+
+            // Switch utility history tab
+            switchUtilityHistoryTab(tab) {
+                const electricityTab = document.getElementById('electricityHistoryTab');
+                const waterTab = document.getElementById('waterHistoryTab');
+                const electricityContent = document.getElementById('electricityHistoryContent');
+                const waterContent = document.getElementById('waterHistoryContent');
+
+                if (tab === 'electricity') {
+                    electricityTab.classList.add('active');
+                    waterTab.classList.remove('active');
+                    electricityContent.style.display = 'block';
+                    waterContent.style.display = 'none';
+                } else {
+                    electricityTab.classList.remove('active');
+                    waterTab.classList.add('active');
+                    electricityContent.style.display = 'none';
+                    waterContent.style.display = 'block';
+                }
             },
 
             // Export utility data
@@ -4611,16 +5471,25 @@
                             <td><span class="badge ${badgeClass}">${transaction.type}</span></td>
                             <td>${transaction.paymentMethod}</td>
                             <td>
-                                <button class="btn btn-sm btn-outline delete-transaction-btn" data-id="${transaction.id}" title="Delete transaction">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn btn-sm btn-outline edit-transaction-btn" data-id="${transaction.id}" title="Edit transaction">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline delete-transaction-btn" data-id="${transaction.id}" title="Delete transaction">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </td>
                         `;
                         tbody.appendChild(row);
                     });
-                    
-                    // Add event listeners for delete buttons
+
+                    // Add event listeners for edit and delete buttons
                     tbody.addEventListener('click', (e) => {
+                        if (e.target.closest('.edit-transaction-btn')) {
+                            const transactionId = e.target.closest('button').dataset.id;
+                            this.showEditTransactionModal(transactionId);
+                        }
                         if (e.target.closest('.delete-transaction-btn')) {
                             const transactionId = e.target.closest('button').dataset.id;
                             this.deleteTransaction(transactionId);
@@ -5226,6 +6095,328 @@
                 if (e.ctrlKey && e.key === 'r') {
                     e.preventDefault();
                     this.fetchExchangeRate();
+                }
+            },
+
+            // Show recurring modal
+            async showRecurringModal() {
+                const categories = await this.loadCategories();
+
+                // Populate category dropdown
+                const categorySelect = document.getElementById('recurringCategory');
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categorySelect.appendChild(option);
+                });
+
+                // Reset form
+                document.getElementById('recurringDescription').value = '';
+                document.getElementById('recurringAmount').value = '';
+                document.getElementById('recurringType').value = 'income';
+                document.getElementById('recurringFrequency').value = 'monthly';
+                document.getElementById('recurringDay').value = '1';
+                document.getElementById('recurringPaymentMethod').value = 'bank';
+                document.getElementById('recurringActive').checked = true;
+
+                // Load existing recurring transactions
+                await this.loadRecurringList();
+
+                this.showModal('recurringModal');
+            },
+
+            // Load recurring transactions list
+            async loadRecurringList() {
+                const recurring = await this.loadData('recurring_transactions') || [];
+                const container = document.getElementById('recurringListContainer');
+                container.innerHTML = '';
+
+                if (recurring.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--text-secondary);"><i class="fas fa-redo" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.3;"></i><p>No recurring transactions set up</p></div>';
+                    return;
+                }
+
+                recurring.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.style.cssText = 'display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--light-gray); border-radius: var(--radius-md); margin-bottom: 10px;';
+                    itemDiv.innerHTML = `
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; margin-bottom: 5px;">${item.description}</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">
+                                ฿ ${this.formatCurrency(item.amount)} • ${item.frequency} • ${item.type}
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="badge ${item.active ? 'badge-income' : ''}" style="${item.active ? '' : 'background: var(--medium-gray); color: var(--text-tertiary);'}">
+                                ${item.active ? 'Active' : 'Inactive'}
+                            </span>
+                            <button class="btn btn-sm btn-outline toggle-recurring-btn" data-index="${index}">
+                                <i class="fas ${item.active ? 'fa-pause' : 'fa-play'}"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-recurring-btn" data-index="${index}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(itemDiv);
+                });
+
+                // Add event listeners
+                container.querySelectorAll('.toggle-recurring-btn').forEach(btn => {
+                    btn.onclick = () => this.toggleRecurringTransaction(parseInt(btn.dataset.index));
+                });
+                container.querySelectorAll('.delete-recurring-btn').forEach(btn => {
+                    btn.onclick = () => this.deleteRecurringTransaction(parseInt(btn.dataset.index));
+                });
+            },
+
+            // Add recurring transaction
+            async addRecurringTransaction() {
+                const description = document.getElementById('recurringDescription').value.trim();
+                const amount = parseFloat(document.getElementById('recurringAmount').value);
+                const type = document.getElementById('recurringType').value;
+                const category = document.getElementById('recurringCategory').value;
+                const frequency = document.getElementById('recurringFrequency').value;
+                const day = parseInt(document.getElementById('recurringDay').value) || 1;
+                const paymentMethod = document.getElementById('recurringPaymentMethod').value;
+                const active = document.getElementById('recurringActive').checked;
+
+                if (!description || isNaN(amount) || !category) {
+                    this.showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                try {
+                    const recurring = await this.loadData('recurring_transactions') || [];
+
+                    recurring.push({
+                        id: `rec_${Date.now()}`,
+                        description,
+                        amount,
+                        type,
+                        category,
+                        frequency,
+                        day,
+                        paymentMethod,
+                        active,
+                        createdAt: DateTime.now().toISO(),
+                        lastExecuted: null
+                    });
+
+                    await this.saveData('recurring_transactions', recurring);
+
+                    // Reset form
+                    document.getElementById('recurringDescription').value = '';
+                    document.getElementById('recurringAmount').value = '';
+                    document.getElementById('recurringCategory').value = '';
+
+                    await this.loadRecurringList();
+                    this.showToast('Recurring transaction added', 'success');
+                } catch (error) {
+                    console.error('Error adding recurring transaction:', error);
+                    this.showToast('Error adding recurring transaction', 'error');
+                }
+            },
+
+            // Toggle recurring transaction
+            async toggleRecurringTransaction(index) {
+                try {
+                    const recurring = await this.loadData('recurring_transactions') || [];
+                    if (recurring[index]) {
+                        recurring[index].active = !recurring[index].active;
+                        await this.saveData('recurring_transactions', recurring);
+                        await this.loadRecurringList();
+                        this.showToast('Recurring transaction updated', 'success');
+                    }
+                } catch (error) {
+                    console.error('Error toggling recurring transaction:', error);
+                    this.showToast('Error updating recurring transaction', 'error');
+                }
+            },
+
+            // Delete recurring transaction
+            async deleteRecurringTransaction(index) {
+                if (!confirm('Delete this recurring transaction?')) return;
+
+                try {
+                    const recurring = await this.loadData('recurring_transactions') || [];
+                    recurring.splice(index, 1);
+                    await this.saveData('recurring_transactions', recurring);
+                    await this.loadRecurringList();
+                    this.showToast('Recurring transaction deleted', 'success');
+                } catch (error) {
+                    console.error('Error deleting recurring transaction:', error);
+                    this.showToast('Error deleting recurring transaction', 'error');
+                }
+            },
+
+            // Show account history modal
+            async showAccountHistoryModal(accountType) {
+                const transactions = await this.loadTransactions();
+                const balances = await this.loadData(this.storageKeys.balances) || { bank: 0, cash: 0 };
+
+                // Update title
+                const title = accountType === 'bank' ? 'Bank Account History' : 'Cash Wallet History';
+                document.getElementById('accountHistoryTitle').innerHTML = `<i class="fas fa-history"></i> ${title}`;
+
+                // Filter transactions for this account type
+                const accountTransactions = transactions.filter(tx => {
+                    if (accountType === 'bank') {
+                        return tx.paymentMethod === 'bank' || tx.paymentMethod === 'bank_to_cash' || tx.paymentMethod === 'cash_to_bank';
+                    } else {
+                        return tx.paymentMethod === 'cash' || tx.paymentMethod === 'bank_to_cash' || tx.paymentMethod === 'cash_to_bank';
+                    }
+                });
+
+                // Calculate totals
+                let totalIncome = 0;
+                let totalExpenses = 0;
+
+                accountTransactions.forEach(tx => {
+                    if (tx.type === 'income') {
+                        if ((accountType === 'bank' && tx.paymentMethod === 'bank') ||
+                            (accountType === 'cash' && tx.paymentMethod === 'cash')) {
+                            totalIncome += tx.amountTHB;
+                        }
+                    } else if (tx.type === 'expense') {
+                        if ((accountType === 'bank' && tx.paymentMethod === 'bank') ||
+                            (accountType === 'cash' && tx.paymentMethod === 'cash')) {
+                            totalExpenses += tx.amountTHB;
+                        }
+                    } else if (tx.type === 'transfer') {
+                        if (accountType === 'bank') {
+                            if (tx.paymentMethod === 'cash_to_bank') totalIncome += tx.amountTHB;
+                            if (tx.paymentMethod === 'bank_to_cash') totalExpenses += tx.amountTHB;
+                        } else {
+                            if (tx.paymentMethod === 'bank_to_cash') totalIncome += tx.amountTHB;
+                            if (tx.paymentMethod === 'cash_to_bank') totalExpenses += tx.amountTHB;
+                        }
+                    }
+                });
+
+                // Update summary
+                document.getElementById('historyCurrentBalance').textContent = `฿ ${this.formatCurrency(balances[accountType] || 0)}`;
+                document.getElementById('historyTotalIncome').textContent = `฿ ${this.formatCurrency(totalIncome)}`;
+                document.getElementById('historyTotalExpenses').textContent = `฿ ${this.formatCurrency(totalExpenses)}`;
+
+                // Populate history table
+                const tbody = document.getElementById('accountHistoryBody');
+                tbody.innerHTML = '';
+
+                if (accountTransactions.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">No transactions found for this account</td></tr>';
+                } else {
+                    accountTransactions.slice(0, 50).forEach(tx => {
+                        const row = document.createElement('tr');
+                        let badgeClass = tx.type === 'income' ? 'badge-income' : tx.type === 'expense' ? 'badge-expense' : 'badge-transfer';
+                        let amountColor = tx.type === 'income' ? 'var(--success)' : tx.type === 'expense' ? 'var(--danger)' : 'var(--warning)';
+
+                        // Get balance after for this account
+                        let balanceAfter = accountType === 'bank' ? tx.bankBalanceAfter : tx.cashBalanceAfter;
+
+                        row.innerHTML = `
+                            <td>${DateTime.fromISO(tx.date).toFormat('dd/MM/yyyy')}</td>
+                            <td>${tx.description}</td>
+                            <td><span class="badge ${badgeClass}">${tx.type}</span></td>
+                            <td style="font-weight: 600; color: ${amountColor};">฿ ${this.formatCurrency(tx.amountTHB)}</td>
+                            <td>฿ ${this.formatCurrency(balanceAfter || 0)}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                this.showModal('accountHistoryModal');
+            },
+
+            // Show edit transaction modal
+            async showEditTransactionModal(transactionId) {
+                const transactions = await this.loadTransactions();
+                const transaction = transactions.find(tx => tx.id === transactionId);
+
+                if (!transaction) {
+                    this.showToast('Transaction not found', 'error');
+                    return;
+                }
+
+                const categories = await this.loadCategories();
+
+                // Populate category dropdown
+                const categorySelect = document.getElementById('editTxCategory');
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    if (category === transaction.category) option.selected = true;
+                    categorySelect.appendChild(option);
+                });
+
+                // Populate form fields
+                document.getElementById('editTxId').value = transaction.id;
+                document.getElementById('editTxDate').value = transaction.date;
+                document.getElementById('editTxDescription').value = transaction.description;
+                document.getElementById('editTxAmount').value = transaction.amountTHB;
+                document.getElementById('editTxType').value = transaction.type;
+                document.getElementById('editTxPaymentMethod').value = transaction.paymentMethod;
+                document.getElementById('editTxNotes').value = transaction.notes || '';
+
+                this.showModal('editTransactionModal');
+            },
+
+            // Save edited transaction
+            async saveEditedTransaction() {
+                const transactionId = document.getElementById('editTxId').value;
+                const date = document.getElementById('editTxDate').value;
+                const description = document.getElementById('editTxDescription').value.trim();
+                const amount = parseFloat(document.getElementById('editTxAmount').value);
+                const type = document.getElementById('editTxType').value;
+                const category = document.getElementById('editTxCategory').value;
+                const paymentMethod = document.getElementById('editTxPaymentMethod').value;
+                const notes = document.getElementById('editTxNotes').value.trim();
+
+                if (!date || !description || isNaN(amount) || !type || !category || !paymentMethod) {
+                    this.showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                try {
+                    const transactions = await this.loadTransactions();
+                    const txIndex = transactions.findIndex(tx => tx.id === transactionId);
+
+                    if (txIndex === -1) {
+                        this.showToast('Transaction not found', 'error');
+                        return;
+                    }
+
+                    // Update transaction
+                    transactions[txIndex] = {
+                        ...transactions[txIndex],
+                        date,
+                        description,
+                        amountTHB: amount,
+                        amountIDR: amount * this.config.exchangeRate.current,
+                        type,
+                        category,
+                        paymentMethod,
+                        notes,
+                        exchangeRate: this.config.exchangeRate.current,
+                        lastModified: DateTime.now().toISO()
+                    };
+
+                    await this.saveData(this.storageKeys.transactions, transactions);
+
+                    // Recalculate balances
+                    await this.recalculateBalances();
+
+                    // Update displays
+                    this.updateAllDisplays();
+                    this.hideModal('editTransactionModal');
+                    this.showToast('Transaction updated', 'success');
+                } catch (error) {
+                    console.error('Error saving transaction:', error);
+                    this.showToast('Error saving transaction', 'error');
                 }
             },
 
