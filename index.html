@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
@@ -512,7 +513,8 @@
             border-radius: var(--radius-md);
             font-size: 1rem;
             transition: all 0.2s;
-            background: var(--off-white);
+            background: var(--white);
+            color: var(--text-primary);
         }
 
         .form-control:focus {
@@ -1560,7 +1562,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="header-stats">
                     <div class="stat-item">
                         <span class="stat-label">Total Balance</span>
@@ -1573,6 +1575,14 @@
                     <div class="stat-item">
                         <span class="stat-label">Monthly Budget</span>
                         <span class="stat-value" id="headerMonthlyBudget">฿ 0.00</span>
+                    </div>
+                    <div class="stat-item" style="border-left: 2px solid var(--border); padding-left: 20px; margin-left: 10px;">
+                        <button class="btn btn-sm btn-outline" id="headerSettingsBtn" title="Settings">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline" id="headerHelpBtn" title="Help" style="margin-left: 8px;">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1910,6 +1920,16 @@
                 <div class="chart-container">
                     <canvas id="budgetChart"></canvas>
                 </div>
+
+                <!-- Category Budget Breakdown -->
+                <div id="categoryBudgetBreakdown" style="margin-top: 25px; display: none;">
+                    <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-list-alt"></i> Category Budget Breakdown
+                    </div>
+                    <div id="categoryBudgetList" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Category budget items will be loaded here -->
+                    </div>
+                </div>
             </div>
 
             <!-- Investment Dashboard Card -->
@@ -2171,6 +2191,9 @@
             </div>
             
             <div style="display: flex; gap: 15px; margin-top: 30px; justify-content: flex-end;">
+                <button class="btn btn-outline" id="addPastReadingBtn">
+                    <i class="fas fa-plus-circle"></i> Add Past Reading
+                </button>
                 <button class="btn btn-outline" id="utilityHistoryBtn">
                     <i class="fas fa-history"></i> View History
                 </button>
@@ -2336,25 +2359,43 @@
 
     <!-- Category Management Modal -->
     <div class="modal" id="categoryModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
                 <h3 class="modal-title">
                     <i class="fas fa-tags"></i> Manage Categories
                 </h3>
                 <button class="close-modal" id="closeCategoryModal">&times;</button>
             </div>
-            
+
+            <!-- Category Type Tabs -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 10px;">
+                <button class="btn btn-sm active" id="incomeCategoryTab" data-type="income" style="flex: 1;">
+                    <i class="fas fa-arrow-up"></i> Income
+                </button>
+                <button class="btn btn-sm" id="expenseCategoryTab" data-type="expense" style="flex: 1;">
+                    <i class="fas fa-arrow-down"></i> Expense
+                </button>
+                <button class="btn btn-sm" id="transferCategoryTab" data-type="transfer" style="flex: 1;">
+                    <i class="fas fa-exchange-alt"></i> Transfer
+                </button>
+            </div>
+
             <div id="categoryListContainer" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
                 <!-- Categories will be loaded here -->
             </div>
-            
+
             <div class="form-group">
                 <label class="form-label" for="newCategoryName">
                     <i class="fas fa-plus"></i>
                     Add New Category
                 </label>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" class="form-control" id="newCategoryName" placeholder="Enter category name">
+                    <select class="form-control" id="newCategoryType" style="width: 130px;">
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                        <option value="transfer">Transfer</option>
+                    </select>
+                    <input type="text" class="form-control" id="newCategoryName" placeholder="Enter category name" style="flex: 1;">
                     <button class="btn btn-primary" id="saveNewCategoryBtn">
                         Add
                     </button>
@@ -2746,30 +2787,40 @@
                 <div class="form-group">
                     <label class="form-label" for="stockAllocation">
                         <i class="fas fa-chart-bar"></i>
-                        Stock Market Allocation (%)
+                        Stock Market Allocation
                     </label>
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
                         <input type="range" id="stockAllocationSlider" min="0" max="100" value="70" style="flex: 1;">
                         <input type="number" class="form-control" id="stockAllocation" style="width: 80px;" min="0" max="100" value="70">
                         <span>%</span>
                     </div>
-                    <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">
-                        Amount: ฿<span id="stockAmountPreview">0</span>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="font-size: 0.9rem; color: var(--text-secondary); min-width: 80px;">Amount:</span>
+                        <input type="number" class="form-control" id="stockAmountInput" style="flex: 1;" placeholder="Enter amount" step="0.01">
+                        <span>฿</span>
+                    </div>
+                    <div style="margin-top: 5px; font-size: 0.85rem; color: var(--text-tertiary);">
+                        Calculated: ฿<span id="stockAmountPreview">0</span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="cryptoAllocation">
                         <i class="fab fa-bitcoin"></i>
-                        Cryptocurrency Allocation (%)
+                        Cryptocurrency Allocation
                     </label>
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
                         <input type="range" id="cryptoAllocationSlider" min="0" max="100" value="30" style="flex: 1;">
                         <input type="number" class="form-control" id="cryptoAllocation" style="width: 80px;" min="0" max="100" value="30">
                         <span>%</span>
                     </div>
-                    <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">
-                        Amount: ฿<span id="cryptoAmountPreview">0</span>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="font-size: 0.9rem; color: var(--text-secondary); min-width: 80px;">Amount:</span>
+                        <input type="number" class="form-control" id="cryptoAmountInput" style="flex: 1;" placeholder="Enter amount" step="0.01">
+                        <span>฿</span>
+                    </div>
+                    <div style="margin-top: 5px; font-size: 0.85rem; color: var(--text-tertiary);">
+                        Calculated: ฿<span id="cryptoAmountPreview">0</span>
                     </div>
                 </div>
 
@@ -3171,6 +3222,55 @@
                         <!-- History will be loaded here -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Past Reading Modal -->
+    <div class="modal" id="pastReadingModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-plus-circle"></i> Add Past Reading
+                </h3>
+                <button class="close-modal" id="closePastReadingModal">&times;</button>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label">Utility Type</label>
+                <select class="form-control" id="pastReadingType">
+                    <option value="electricity">Electricity (kWh)</option>
+                    <option value="water">Water (units)</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label">Reading Value</label>
+                <input type="number" class="form-control" id="pastReadingValue" placeholder="Enter meter reading" step="0.01">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label">Reading Date</label>
+                <input type="date" class="form-control" id="pastReadingDate">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label">Notes (Optional)</label>
+                <textarea class="form-control" id="pastReadingNotes" rows="2" placeholder="Add any notes about this reading"></textarea>
+            </div>
+
+            <div class="info-alert" style="margin-bottom: 20px;">
+                <i class="fas fa-info-circle"></i>
+                <div>This allows you to add historical meter readings. The reading will be inserted in chronological order and used for consumption calculations.</div>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-primary" style="flex: 1;" id="savePastReadingBtn">
+                    <i class="fas fa-save"></i> Save Reading
+                </button>
+                <button class="btn btn-outline" style="flex: 1;" id="cancelPastReadingBtn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
             </div>
         </div>
     </div>
@@ -3612,9 +3712,24 @@
                                             return `${context.label}: ฿${context.raw}`;
                                         }
                                     }
+                                },
+                                datalabels: {
+                                    color: '#fff',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 14
+                                    },
+                                    formatter: (value, context) => {
+                                        const data = context.chart.data.datasets[0].data;
+                                        const total = data.reduce((a, b) => a + b, 0);
+                                        if (total === 0 || value === 0) return '';
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return percentage + '%';
+                                    }
                                 }
                             }
-                        }
+                        },
+                        plugins: [ChartDataLabels]
                     });
                 }
                 
@@ -3638,9 +3753,24 @@
                             plugins: {
                                 legend: {
                                     position: 'bottom'
+                                },
+                                datalabels: {
+                                    color: '#fff',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 14
+                                    },
+                                    formatter: (value, context) => {
+                                        const data = context.chart.data.datasets[0].data;
+                                        const total = data.reduce((a, b) => a + b, 0);
+                                        if (total === 0 || value === 0) return '';
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return percentage + '%';
+                                    }
                                 }
                             }
-                        }
+                        },
+                        plugins: [ChartDataLabels]
                     });
                 }
             },
@@ -3709,6 +3839,7 @@
                 document.getElementById('utilitySettingsBtn').onclick = () => this.showUtilitySettings();
                 document.getElementById('utilityHistoryBtn').onclick = () => this.showUtilityHistory();
                 document.getElementById('utilityExportBtn').onclick = () => this.exportUtilityData();
+                document.getElementById('addPastReadingBtn').onclick = () => this.showPastReadingModal();
                 
                 // Transaction filters
                 document.querySelectorAll('.table-filters .btn[data-filter]').forEach(btn => {
@@ -3722,6 +3853,10 @@
                 // Settings and help
                 document.getElementById('settingsBtn').onclick = () => this.showSettingsModal();
                 document.getElementById('helpBtn').onclick = () => this.showHelpModal();
+
+                // Header settings and help buttons
+                document.getElementById('headerSettingsBtn').onclick = () => this.showSettingsModal();
+                document.getElementById('headerHelpBtn').onclick = () => this.showHelpModal();
                 document.getElementById('backupBtn').onclick = () => this.backupData();
                 document.getElementById('restoreBtn').onclick = () => this.restoreData();
                 document.getElementById('resetAppBtn').onclick = () => this.resetAppData();
@@ -3749,6 +3884,9 @@
                 // Category modal
                 document.getElementById('closeCategoryModal').onclick = () => this.hideModal('categoryModal');
                 document.getElementById('saveNewCategoryBtn').onclick = () => this.saveNewCategory();
+                document.getElementById('incomeCategoryTab').onclick = () => this.switchCategoryTab('income');
+                document.getElementById('expenseCategoryTab').onclick = () => this.switchCategoryTab('expense');
+                document.getElementById('transferCategoryTab').onclick = () => this.switchCategoryTab('transfer');
                 
                 // Manual rate modal
                 document.getElementById('closeManualRateModal').onclick = () => this.hideModal('manualRateModal');
@@ -3784,6 +3922,8 @@
                 document.getElementById('stockAllocation').oninput = (e) => this.syncInvestmentInput('stock', e.target.value);
                 document.getElementById('cryptoAllocationSlider').oninput = (e) => this.syncInvestmentSlider('crypto', e.target.value);
                 document.getElementById('cryptoAllocation').oninput = (e) => this.syncInvestmentInput('crypto', e.target.value);
+                document.getElementById('stockAmountInput').oninput = (e) => this.syncInvestmentAmount('stock', e.target.value);
+                document.getElementById('cryptoAmountInput').oninput = (e) => this.syncInvestmentAmount('crypto', e.target.value);
                 document.getElementById('stockReturn').oninput = () => this.updateInvestmentPreview();
                 document.getElementById('cryptoReturn').oninput = () => this.updateInvestmentPreview();
 
@@ -3806,6 +3946,11 @@
 
                 // Account history modal
                 document.getElementById('closeAccountHistoryModal').onclick = () => this.hideModal('accountHistoryModal');
+
+                // Past reading modal
+                document.getElementById('closePastReadingModal').onclick = () => this.hideModal('pastReadingModal');
+                document.getElementById('cancelPastReadingBtn').onclick = () => this.hideModal('pastReadingModal');
+                document.getElementById('savePastReadingBtn').onclick = () => this.savePastReading();
 
                 // Close modals on outside click
                 window.onclick = (e) => {
@@ -4452,7 +4597,7 @@
             handleTransactionTypeChange(type) {
                 const paymentSelect = document.getElementById('txPaymentMethod');
                 paymentSelect.innerHTML = '<option value="">Select Method</option>';
-                
+
                 if (type === 'transfer') {
                     paymentSelect.innerHTML += `
                         <option value="bank_to_cash">Bank → Cash (Withdrawal)</option>
@@ -4464,34 +4609,87 @@
                         <option value="cash">Cash</option>
                     `;
                 }
+
+                // Update category dropdown based on transaction type
+                this.updateCategoryDropdowns(type);
             },
 
-            // Load categories
+            // Load categories (now supports typed categories)
             async loadCategories() {
-                this.state.categories = await this.loadData(this.storageKeys.categories) || [];
+                const stored = await this.loadData(this.storageKeys.categories);
+                // Migration: convert old array format to new typed format
+                if (Array.isArray(stored) && stored.length > 0 && typeof stored[0] === 'string') {
+                    // Old format - migrate to new format
+                    const migratedCategories = {
+                        income: ['Salary', 'Freelance', 'Investment', 'Other Income'],
+                        expense: stored,
+                        transfer: ['Bank Transfer', 'Cash Withdrawal', 'Cash Deposit']
+                    };
+                    await this.saveData(this.storageKeys.categories, migratedCategories);
+                    this.state.categories = migratedCategories;
+                } else if (stored && typeof stored === 'object' && !Array.isArray(stored)) {
+                    this.state.categories = stored;
+                } else {
+                    this.state.categories = {
+                        income: ['Salary', 'Freelance', 'Investment', 'Bonus', 'Other Income'],
+                        expense: ['Food & Dining', 'Transportation', 'Utilities', 'Shopping', 'Entertainment', 'Healthcare', 'Education', 'Other'],
+                        transfer: ['Bank Transfer', 'Cash Withdrawal', 'Cash Deposit', 'Investment Transfer']
+                    };
+                }
                 return this.state.categories;
             },
 
+            // Get categories by type
+            getCategoriesByType(type) {
+                return this.state.categories[type] || [];
+            },
+
+            // Get all categories as flat array
+            getAllCategoriesFlat() {
+                const categories = this.state.categories;
+                return [...(categories.income || []), ...(categories.expense || []), ...(categories.transfer || [])];
+            },
+
             // Update category dropdowns
-            async updateCategoryDropdowns() {
+            async updateCategoryDropdowns(transactionType = null) {
                 const categories = await this.loadCategories();
                 const transactionCategorySelect = document.getElementById('txCategory');
                 const filterCategorySelect = document.getElementById('categoryFilter');
-                
-                // Clear and repopulate
+
+                // Clear and repopulate transaction category (based on type)
                 transactionCategorySelect.innerHTML = '<option value="">Select Category</option>';
+
+                if (transactionType && categories[transactionType]) {
+                    categories[transactionType].forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category;
+                        option.textContent = category;
+                        transactionCategorySelect.appendChild(option);
+                    });
+                } else {
+                    // Show all categories
+                    Object.keys(categories).forEach(type => {
+                        categories[type].forEach(category => {
+                            const option = document.createElement('option');
+                            option.value = category;
+                            option.textContent = category;
+                            transactionCategorySelect.appendChild(option);
+                        });
+                    });
+                }
+
+                // Filter always shows all categories
                 filterCategorySelect.innerHTML = '<option value="">All Categories</option>';
-                
-                categories.forEach(category => {
-                    const option1 = document.createElement('option');
-                    option1.value = category;
-                    option1.textContent = category;
-                    transactionCategorySelect.appendChild(option1);
-                    
-                    const option2 = document.createElement('option');
-                    option2.value = category;
-                    option2.textContent = category;
-                    filterCategorySelect.appendChild(option2);
+                Object.keys(categories).forEach(type => {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = type.charAt(0).toUpperCase() + type.slice(1);
+                    categories[type].forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category;
+                        option.textContent = category;
+                        optgroup.appendChild(option);
+                    });
+                    filterCategorySelect.appendChild(optgroup);
                 });
             },
 
@@ -4518,85 +4716,118 @@
 
             // Show category modal
             async showCategoryModal() {
-                await this.populateCategoryList();
+                this.state.currentCategoryTab = 'income';
+                document.getElementById('newCategoryType').value = 'income';
+                await this.populateCategoryList('income');
+                this.switchCategoryTab('income');
                 this.showModal('categoryModal');
             },
 
+            // Switch category tab
+            switchCategoryTab(type) {
+                this.state.currentCategoryTab = type;
+                document.getElementById('newCategoryType').value = type;
+
+                // Update tab active states
+                document.querySelectorAll('#categoryModal .btn[data-type]').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`#categoryModal .btn[data-type="${type}"]`).classList.add('active');
+
+                // Reload category list for the selected type
+                this.populateCategoryList(type);
+            },
+
             // Populate category list
-            async populateCategoryList() {
+            async populateCategoryList(type = null) {
                 const categories = await this.loadCategories();
                 const container = document.getElementById('categoryListContainer');
+                const categoryType = type || this.state.currentCategoryTab || 'expense';
+                const categoryList = categories[categoryType] || [];
+
                 container.innerHTML = '';
-                
-                if (categories.length === 0) {
-                    container.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">No categories yet</div>';
+
+                if (categoryList.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-secondary);">No ${categoryType} categories yet</div>`;
                     return;
                 }
-                
-                categories.forEach(category => {
+
+                categoryList.forEach(category => {
                     const categoryDiv = document.createElement('div');
                     categoryDiv.className = 'config-item';
                     categoryDiv.innerHTML = `
                         <span>${category}</span>
-                        <button type="button" class="btn btn-danger btn-sm delete-category-btn" data-category="${category}">
+                        <button type="button" class="btn btn-danger btn-sm delete-category-btn" data-category="${category}" data-type="${categoryType}">
                             <i class="fas fa-trash"></i>
                         </button>
                     `;
                     container.appendChild(categoryDiv);
                 });
-                
+
                 // Add event listeners for delete buttons
-                container.addEventListener('click', async (e) => {
+                container.onclick = async (e) => {
                     if (e.target.closest('.delete-category-btn')) {
-                        const category = e.target.closest('button').dataset.category;
-                        await this.deleteCategory(category);
-                        await this.populateCategoryList();
+                        const btn = e.target.closest('button');
+                        const category = btn.dataset.category;
+                        const type = btn.dataset.type;
+                        await this.deleteCategory(category, type);
                     }
-                });
+                };
             },
 
             // Save new category
             async saveNewCategory() {
                 const input = document.getElementById('newCategoryName');
+                const typeSelect = document.getElementById('newCategoryType');
                 const categoryName = input.value.trim();
-                
+                const categoryType = typeSelect.value;
+
                 if (!categoryName) {
                     this.showToast('Please enter a category name', 'error');
                     return;
                 }
-                
+
                 const categories = await this.loadCategories();
-                
-                if (!categories.includes(categoryName)) {
-                    categories.push(categoryName);
+
+                if (!categories[categoryType]) {
+                    categories[categoryType] = [];
+                }
+
+                if (!categories[categoryType].includes(categoryName)) {
+                    categories[categoryType].push(categoryName);
                     await this.saveData(this.storageKeys.categories, categories);
-                    
+
                     // Update displays
                     this.updateCategoryDropdowns();
-                    await this.populateCategoryList();
-                    
+                    await this.populateCategoryList(categoryType);
+
                     input.value = '';
-                    this.showToast('Category added successfully', 'success');
+                    this.showToast(`${categoryType.charAt(0).toUpperCase() + categoryType.slice(1)} category added successfully`, 'success');
                 } else {
-                    this.showToast('Category already exists', 'warning');
+                    this.showToast('Category already exists in this type', 'warning');
                 }
             },
 
             // Delete category
-            async deleteCategory(categoryName) {
+            async deleteCategory(categoryName, categoryType = null) {
                 if (!confirm(`Delete category "${categoryName}"? This will not delete transactions in this category.`)) {
                     return;
                 }
-                
+
                 const categories = await this.loadCategories();
-                const index = categories.indexOf(categoryName);
-                
-                if (index > -1) {
-                    categories.splice(index, 1);
-                    await this.saveData(this.storageKeys.categories, categories);
-                    
-                    this.updateCategoryDropdowns();
-                    this.showToast('Category deleted', 'success');
+                const type = categoryType || this.state.currentCategoryTab || 'expense';
+
+                if (categories[type]) {
+                    const index = categories[type].indexOf(categoryName);
+
+                    if (index > -1) {
+                        categories[type].splice(index, 1);
+                        await this.saveData(this.storageKeys.categories, categories);
+
+                        this.updateCategoryDropdowns();
+                        await this.populateCategoryList(type);
+                        this.showToast('Category deleted', 'success');
+                    }
                 }
             },
 
@@ -4669,6 +4900,82 @@
                 if (this.charts.budget) {
                     this.charts.budget.data.datasets[0].data = [monthlySpent, Math.max(remaining, 0)];
                     this.charts.budget.update();
+                }
+
+                // Update category budget breakdown
+                await this.updateCategoryBudgetBreakdown(transactions, budget, currentMonth);
+            },
+
+            // Update category budget breakdown display
+            async updateCategoryBudgetBreakdown(transactions, budget, currentMonth) {
+                const breakdownContainer = document.getElementById('categoryBudgetBreakdown');
+                const listContainer = document.getElementById('categoryBudgetList');
+
+                if (!budget.categoryBudgets || budget.categoryBudgets.length === 0) {
+                    breakdownContainer.style.display = 'none';
+                    return;
+                }
+
+                // Calculate spending per category
+                const categorySpending = {};
+                transactions
+                    .filter(tx => {
+                        const txDate = DateTime.fromISO(tx.date);
+                        return tx.type === 'expense' &&
+                               txDate.toFormat('yyyy-MM') === currentMonth;
+                    })
+                    .forEach(tx => {
+                        categorySpending[tx.category] = (categorySpending[tx.category] || 0) + tx.amountTHB;
+                    });
+
+                // Build breakdown list
+                let html = '';
+                budget.categoryBudgets.forEach(cb => {
+                    if (cb.amount > 0) {
+                        const spent = categorySpending[cb.category] || 0;
+                        const remaining = cb.amount - spent;
+                        const percentage = (spent / cb.amount) * 100;
+                        const isOver = percentage >= 100;
+                        const isWarning = percentage >= 80 && !isOver;
+
+                        let progressClass = 'progress-good';
+                        let statusColor = 'var(--success)';
+                        if (isOver) {
+                            progressClass = 'progress-danger';
+                            statusColor = 'var(--danger)';
+                        } else if (isWarning) {
+                            progressClass = 'progress-warning';
+                            statusColor = 'var(--warning)';
+                        }
+
+                        html += `
+                            <div style="background: var(--light-gray); padding: 12px; border-radius: var(--radius-md); margin-bottom: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <span style="font-weight: 500; color: var(--text-primary);">${cb.category}</span>
+                                    <span style="font-size: 0.85rem; color: ${statusColor};">
+                                        ${percentage.toFixed(1)}% used
+                                    </span>
+                                </div>
+                                <div class="progress-bar" style="margin-bottom: 8px;">
+                                    <div class="progress-fill ${progressClass}" style="width: ${Math.min(percentage, 100)}%"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary);">
+                                    <span>Spent: ฿${this.formatCurrency(spent)}</span>
+                                    <span>Budget: ฿${this.formatCurrency(cb.amount)}</span>
+                                    <span style="color: ${remaining >= 0 ? 'var(--success)' : 'var(--danger)'};">
+                                        ${remaining >= 0 ? 'Left: ฿' + this.formatCurrency(remaining) : 'Over: ฿' + this.formatCurrency(Math.abs(remaining))}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                if (html) {
+                    listContainer.innerHTML = html;
+                    breakdownContainer.style.display = 'block';
+                } else {
+                    breakdownContainer.style.display = 'none';
                 }
             },
 
@@ -4904,6 +5211,47 @@
                 this.updateInvestmentPreview();
             },
 
+            // Sync investment amount with percentage slider
+            async syncInvestmentAmount(type, value) {
+                const budget = await this.loadBudget();
+                const annualIncome = budget.annualIncome || 600000;
+                const allocationPercent = parseFloat(document.getElementById('investmentAllocation').value) || 0;
+                const annualInvestment = (annualIncome * allocationPercent) / 100;
+
+                if (annualInvestment <= 0) {
+                    this.showToast('Please set investment allocation first', 'warning');
+                    return;
+                }
+
+                const amount = parseFloat(value) || 0;
+                const percentage = Math.round((amount / annualInvestment) * 100);
+                const clampedPercentage = Math.min(100, Math.max(0, percentage));
+
+                if (type === 'stock') {
+                    document.getElementById('stockAllocation').value = clampedPercentage;
+                    document.getElementById('stockAllocationSlider').value = clampedPercentage;
+                    // Auto-adjust crypto
+                    const cryptoPercent = Math.max(0, 100 - clampedPercentage);
+                    document.getElementById('cryptoAllocation').value = cryptoPercent;
+                    document.getElementById('cryptoAllocationSlider').value = cryptoPercent;
+                    // Update crypto amount input
+                    const cryptoAmount = (annualInvestment * cryptoPercent) / 100;
+                    document.getElementById('cryptoAmountInput').value = cryptoAmount.toFixed(2);
+                } else if (type === 'crypto') {
+                    document.getElementById('cryptoAllocation').value = clampedPercentage;
+                    document.getElementById('cryptoAllocationSlider').value = clampedPercentage;
+                    // Auto-adjust stock
+                    const stockPercent = Math.max(0, 100 - clampedPercentage);
+                    document.getElementById('stockAllocation').value = stockPercent;
+                    document.getElementById('stockAllocationSlider').value = stockPercent;
+                    // Update stock amount input
+                    const stockAmount = (annualInvestment * stockPercent) / 100;
+                    document.getElementById('stockAmountInput').value = stockAmount.toFixed(2);
+                }
+
+                this.updateInvestmentPreview();
+            },
+
             // Update investment preview
             async updateInvestmentPreview() {
                 const budget = await this.loadBudget();
@@ -4922,6 +5270,16 @@
                 document.getElementById('annualInvestmentPreview').textContent = this.formatCurrency(annualInvestment);
                 document.getElementById('stockAmountPreview').textContent = this.formatCurrency(stockAmount);
                 document.getElementById('cryptoAmountPreview').textContent = this.formatCurrency(cryptoAmount);
+
+                // Update amount input fields if they're empty or not focused
+                const stockInput = document.getElementById('stockAmountInput');
+                const cryptoInput = document.getElementById('cryptoAmountInput');
+                if (document.activeElement !== stockInput) {
+                    stockInput.value = stockAmount.toFixed(2);
+                }
+                if (document.activeElement !== cryptoInput) {
+                    cryptoInput.value = cryptoAmount.toFixed(2);
+                }
 
                 // Calculate projected returns
                 const stockMonthlyReturn = (stockAmount * stockReturnRate) / 100;
@@ -5373,6 +5731,100 @@
                     electricityContent.style.display = 'none';
                     waterContent.style.display = 'block';
                 }
+            },
+
+            // Show past reading modal
+            showPastReadingModal() {
+                const today = DateTime.now().toFormat('yyyy-MM-dd');
+                document.getElementById('pastReadingType').value = 'electricity';
+                document.getElementById('pastReadingValue').value = '';
+                document.getElementById('pastReadingDate').value = today;
+                document.getElementById('pastReadingNotes').value = '';
+                this.showModal('pastReadingModal');
+            },
+
+            // Save past reading
+            async savePastReading() {
+                const type = document.getElementById('pastReadingType').value;
+                const value = parseFloat(document.getElementById('pastReadingValue').value);
+                const date = document.getElementById('pastReadingDate').value;
+                const notes = document.getElementById('pastReadingNotes').value;
+
+                if (!value || isNaN(value) || value < 0) {
+                    this.showToast('Please enter a valid reading value', 'error');
+                    return;
+                }
+
+                if (!date) {
+                    this.showToast('Please select a date for the reading', 'error');
+                    return;
+                }
+
+                const utilities = await this.loadUtilities();
+                const utilityData = utilities[type];
+                const rate = this.config.utilities[type].rate;
+
+                // Create new reading entry
+                const newReading = {
+                    id: Date.now(),
+                    timestamp: DateTime.fromISO(date).toISO(),
+                    date: date,
+                    reading: value,
+                    consumption: 0,
+                    days: 0,
+                    dailyAverage: 0,
+                    cost: 0,
+                    notes: notes || ''
+                };
+
+                // Insert reading in chronological order
+                let history = [...utilityData.history, newReading];
+                history.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+                // Recalculate consumption for all readings after insertion
+                for (let i = 0; i < history.length; i++) {
+                    if (i === 0) {
+                        // First reading - no consumption to calculate
+                        history[i].consumption = 0;
+                        history[i].days = 0;
+                        history[i].dailyAverage = 0;
+                        history[i].cost = 0;
+                    } else {
+                        const prevReading = history[i - 1];
+                        const currentDate = DateTime.fromISO(history[i].timestamp);
+                        const prevDate = DateTime.fromISO(prevReading.timestamp);
+                        const days = currentDate.diff(prevDate, 'days').days;
+                        const consumption = history[i].reading - prevReading.reading;
+
+                        if (consumption >= 0 && days > 0) {
+                            history[i].consumption = consumption;
+                            history[i].days = Math.round(days);
+                            history[i].dailyAverage = consumption / days;
+                            history[i].cost = consumption * rate;
+                        } else {
+                            history[i].consumption = 0;
+                            history[i].days = Math.round(days);
+                            history[i].dailyAverage = 0;
+                            history[i].cost = 0;
+                        }
+                    }
+                }
+
+                // Update utilities data
+                utilities[type].history = history;
+
+                // Update current reading to the latest
+                if (history.length > 0) {
+                    const latestReading = history[history.length - 1];
+                    utilities[type].currentReading = latestReading.reading;
+                    utilities[type].lastReadingDate = latestReading.date;
+                }
+
+                await this.saveUtilities(utilities);
+                await this.updateUtilityDisplays();
+
+                this.hideModal('pastReadingModal');
+                this.showToast(`Past ${type} reading added successfully`, 'success');
             },
 
             // Export utility data
